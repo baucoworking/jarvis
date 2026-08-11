@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -7,6 +8,9 @@ from google.genai import types
 from jarvis.voice.provider import VoiceProvider
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
 
 MODEL = "models/gemini-3.1-flash-live-preview"
 
@@ -37,16 +41,26 @@ class GeminiLiveProvider(VoiceProvider):
         self._session_cm = None
 
     async def connect(self) -> None:
-        self._session_cm = self.client.aio.live.connect(model=MODEL, config=self.config)
-        self.session = await self._session_cm.__aenter__()
+        logger.info("Conectando a Gemini Live (modelo=%s)", MODEL)
+        try:
+            self._session_cm = self.client.aio.live.connect(
+                model=MODEL, config=self.config
+            )
+            self.session = await self._session_cm.__aenter__()
+        except Exception:
+            logger.exception("Error conectando a Gemini Live")
+            raise
+        logger.info("Conectado a Gemini Live")
 
     async def disconnect(self) -> None:
         if self._session_cm is not None:
+            logger.info("Desconectando de Gemini Live")
             await self._session_cm.__aexit__(None, None, None)
             self._session_cm = None
             self.session = None
 
     async def send_audio(self, audio: bytes) -> None:
+        logger.debug("Enviando audio a Gemini (%d bytes)", len(audio))
         assert self.session is not None, (
             "GeminiLiveProvider no está conectado (llamar connect() primero)"
         )
@@ -55,8 +69,13 @@ class GeminiLiveProvider(VoiceProvider):
         )
 
     async def receive(self):
-        """Async generator: yields chunks de audio (bytes) a medida que
-        Gemini los va generando, turno por turno, indefinidamente.
+        """Async generator: yields eventos a medida que Gemini los va
+        generando. Cada evento es una tupla (tipo, payload):
+          ("audio", bytes)  -> chunk de audio para reproducir
+          ("interrupted", None) -> el servidor detectó que el usuario
+              habló durante la generación (barge-in nativo). Quien
+              consuma este generador debe cortar la reproducción en
+              curso al recibir esto.
         """
         assert self.session is not None, (
             "GeminiLiveProvider no está conectado (llamar connect() primero)"
@@ -64,13 +83,21 @@ class GeminiLiveProvider(VoiceProvider):
         while True:
             turn = self.session.receive()
             async for response in turn:
+                server_content = response.server_content
+                if server_content is not None and server_content.interrupted:
+                    logger.debug("Gemini señalizó interrupción (barge-in nativo)")
+                    yield ("interrupted", None)
+                    continue
+
                 if data := response.data:
-                    yield data
+                    logger.debug("Audio recibido de Gemini (%d bytes)", len(data))
+                    yield ("audio", data)
 
     async def interrupt(self) -> None:
-        # Gemini Live soporta barge-in nativo, pero JARVIS todavía no
-        # maneja interrupciones (decisión: v0.2.0 es solo conversación
-        # continua). Se deja explícito en vez de simular que funciona.
-        raise NotImplementedError(
-            "interrupt() todavía no está implementado (planeado post v0.2.0)"
-        )
+        """No-op: con el VAD automático del servidor (config por
+        defecto), Gemini detecta y corta la interrupción por su
+        cuenta — no hace falta que JARVIS le avise nada. Se mantiene
+        en la interfaz porque Conversation la llama al recibir
+        ("interrupted", None) desde receive(), pero para este
+        proveedor no hay nada que enviar.
+        """
