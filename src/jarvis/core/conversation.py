@@ -16,18 +16,29 @@ class Conversation:
     apoya en la detección de actividad nativa del proveedor de voz
     (VAD del lado del servidor): cuando voice.receive() entrega un
     evento "interrupted", esta clase corta la reproducción en curso.
+
+    Recepción y reproducción corren en tareas separadas, conectadas
+    por una cola. Esto es a propósito: el proveedor de voz puede
+    generar audio más rápido que tiempo real, así que puede haber
+    varios chunks ya en camino cuando el usuario interrumpe. Si
+    "recibir eventos" y "reproducir audio" fueran la misma tarea
+    bloqueante, un evento "interrupted" que llegue detrás de ese
+    backlog no se procesaría hasta que todo el backlog terminara de
+    sonar — que es exactamente el bug de barge-in tardío que este
+    diseño evita.
     """
 
     def __init__(self, audio: AudioIO, voice: VoiceProvider):
         self.audio = audio
         self.voice = voice
         self._tasks: list[asyncio.Task] = []
+        self._playback_queue: asyncio.Queue[bytes] = asyncio.Queue()
         self._playback_task: asyncio.Task | None = None
 
     async def start(self) -> None:
         """Conecta el proveedor de voz, abre el audio, y arranca las
-        dos tareas concurrentes que sostienen la conversación:
-        micrófono → voice, y voice → parlantes.
+        tareas concurrentes que sostienen la conversación: micrófono
+        → voice, voice → cola de reproducción, y cola → parlantes.
         """
         logger.info("Conectando proveedor de voz")
         await self.voice.connect()
@@ -35,10 +46,13 @@ class Conversation:
         logger.info("Iniciando audio")
         await self.audio.start()
 
-        logger.info("Arrancando loops de conversación (send/receive)")
+        logger.info("Arrancando loops de conversación (send/receive/playback)")
         self._tasks = [
             asyncio.create_task(self._send_loop(), name="conversation-send"),
             asyncio.create_task(self._receive_loop(), name="conversation-receive"),
+            asyncio.create_task(
+                self._playback_loop(), name="conversation-playback-loop"
+            ),
         ]
 
         try:
@@ -81,16 +95,23 @@ class Conversation:
             raise
 
     async def _receive_loop(self) -> None:
-        """Recibe eventos del proveedor de voz: reproduce audio, y
-        corta la reproducción en curso si el proveedor señaliza una
-        interrupción (barge-in detectado por su VAD nativo).
+        """Recibe eventos del proveedor de voz e interpreta qué
+        significan. A propósito NO reproduce audio directamente —
+        solo lo encola para _playback_loop. Así, este loop nunca
+        queda bloqueado esperando que suene un chunk, y puede
+        reaccionar a "interrupted" apenas lo recibe, sin importar
+        cuánto audio haya todavía pendiente de sonar.
         """
         try:
             async for kind, payload in self.voice.receive():
                 if kind == "interrupted":
+                    pending = self._playback_queue.qsize()
                     logger.info(
-                        "Interrupción detectada (barge-in) — cortando reproducción"
+                        "Interrupción detectada (barge-in) — cortando reproducción "
+                        "y descartando %d chunk(s) pendiente(s)",
+                        pending,
                     )
+                    self._clear_playback_queue()
                     if self._playback_task is not None:
                         self._playback_task.cancel()
                     await self.voice.interrupt()
@@ -98,17 +119,42 @@ class Conversation:
 
                 if kind == "audio":
                     logger.debug(
-                        "Chunk recibido para reproducir (%d bytes)", len(payload)
+                        "Chunk recibido de voice, encolado para reproducir (%d bytes)",
+                        len(payload),
                     )
-                    self._playback_task = asyncio.create_task(
-                        self.audio.write_chunk(payload), name="conversation-playback"
-                    )
-                    try:
-                        await self._playback_task
-                    except asyncio.CancelledError:
-                        pass
-                    finally:
-                        self._playback_task = None
+                    await self._playback_queue.put(payload)
         except Exception:
-            logger.exception("Error en receive_loop (voice → parlantes)")
+            logger.exception("Error en receive_loop (voice → cola de reproducción)")
             raise
+
+    async def _playback_loop(self) -> None:
+        """Consume la cola de audio y lo reproduce en orden, un chunk
+        a la vez. Vive separado de _receive_loop para que recibir
+        eventos nunca dependa de cuánto tarda en sonar el audio.
+        """
+        try:
+            while True:
+                payload = await self._playback_queue.get()
+                self._playback_task = asyncio.create_task(
+                    self.audio.write_chunk(payload), name="conversation-playback"
+                )
+                try:
+                    await self._playback_task
+                except asyncio.CancelledError:
+                    pass
+                finally:
+                    self._playback_task = None
+        except Exception:
+            logger.exception("Error en playback_loop (cola → parlantes)")
+            raise
+
+    def _clear_playback_queue(self) -> None:
+        """Descarta cualquier audio todavía no reproducido — se usa
+        al interrumpir, para no seguir reproduciendo una respuesta
+        que Gemini ya abandonó.
+        """
+        while not self._playback_queue.empty():
+            try:
+                self._playback_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                break
