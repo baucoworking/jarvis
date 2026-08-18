@@ -43,9 +43,6 @@ class Conversation:
         logger.info("Conectando proveedor de voz")
         await self.voice.connect()
 
-        logger.info("Iniciando audio")
-        await self.audio.start()
-
         logger.info("Arrancando loops de conversación (send/receive/playback)")
         self._tasks = [
             asyncio.create_task(self._send_loop(), name="conversation-send"),
@@ -79,7 +76,6 @@ class Conversation:
                 pass
         self._tasks = []
 
-        await self.audio.stop()
         await self.voice.disconnect()
         logger.info("Conversación detenida")
 

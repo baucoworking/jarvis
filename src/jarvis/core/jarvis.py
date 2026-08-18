@@ -4,6 +4,7 @@ import logging
 from jarvis.audio.io import AudioIO
 from jarvis.core.conversation import Conversation
 from jarvis.voice.provider import VoiceProvider
+from jarvis.voice.wake_word import WakeWordProvider
 
 logger = logging.getLogger(__name__)
 
@@ -13,11 +14,13 @@ class Jarvis:
         self,
         voice: VoiceProvider,
         audio: AudioIO,
+        wake_word: WakeWordProvider,
         reasoning=None,
         memory=None,
         tools=None,
     ):
         self.voice = voice
+        self.wake_word = wake_word
         self.audio = audio
         self.reasoning = reasoning
         self.memory = memory
@@ -28,7 +31,13 @@ class Jarvis:
     async def start(self) -> None:
         logger.info("Iniciando JARVIS")
         try:
+            logger.info("Iniciando audio")
+            await self.audio.start()
+            logger.info("Iniciando wake word")
+            await self.wake_word.connect()
+            await self.wake_word.listen_until_detected(self.audio)
             await self.conversation.start()
+
         except (asyncio.CancelledError, KeyboardInterrupt):
             logger.info("Conversación cancelada por el usuario")
         except Exception:

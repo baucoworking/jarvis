@@ -1,0 +1,82 @@
+2026-08-11 01:19:27,320 [INFO] jarvis.main (main.py:17): JARVIS arrancando
+2026-08-11 01:19:27,321 [INFO] jarvis.core.jarvis (jarvis.py:29): Iniciando JARVIS
+2026-08-11 01:19:27,321 [INFO] jarvis.core.conversation (conversation.py:32): Conectando proveedor de voz
+2026-08-11 01:19:27,321 [INFO] jarvis.voice.gemini_live (gemini_live.py:44): Conectando a Gemini Live (modelo=models/gemini-3.1-flash-live-preview)
+2026-08-11 01:19:28,601 [INFO] jarvis.voice.gemini_live (gemini_live.py:53): Conectado a Gemini Live
+2026-08-11 01:19:28,601 [INFO] jarvis.core.conversation (conversation.py:35): Iniciando audio
+2026-08-11 01:19:28,602 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:31): Iniciando PyAudio
+2026-08-11 01:19:29,004 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:42): Dispositivo de entrada: Varios micrÃ³fonos (Realtek Audi (index=1)
+2026-08-11 01:19:29,806 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:63): Streams de audio abiertos (input=16000Hz, output=24000Hz)
+2026-08-11 01:19:29,806 [INFO] jarvis.core.conversation (conversation.py:38): Arrancando loops de conversación (send/receive)
+2026-08-11 01:20:10,508 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:19,076 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:22,219 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:25,886 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:32,331 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:36,709 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:20:43,600 [INFO] jarvis.core.jarvis (jarvis.py:41): Deteniendo JARVIS
+2026-08-11 01:20:43,601 [INFO] jarvis.core.conversation (conversation.py:54): Deteniendo conversación
+2026-08-11 01:20:45,846 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:70): Deteniendo PyAudio
+2026-08-11 01:20:45,881 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:84): PyAudio detenido
+2026-08-11 01:20:45,881 [INFO] jarvis.voice.gemini_live (gemini_live.py:57): Desconectando de Gemini Live
+2026-08-11 01:20:46,030 [INFO] jarvis.core.conversation (conversation.py:70): Conversación detenida
+2026-08-11 01:20:46,030 [INFO] jarvis.main (main.py:21): JARVIS finalizado
+2026-08-11 01:20:46,033 [INFO] jarvis.main (main.py:32): Interrumpido por el usuario (Ctrl+C)
+2026-08-11 01:20:52,362 [INFO] jarvis.main (main.py:17): JARVIS arrancando
+2026-08-11 01:20:52,362 [INFO] jarvis.core.jarvis (jarvis.py:29): Iniciando JARVIS
+2026-08-11 01:20:52,363 [INFO] jarvis.core.conversation (conversation.py:32): Conectando proveedor de voz
+2026-08-11 01:20:52,363 [INFO] jarvis.voice.gemini_live (gemini_live.py:44): Conectando a Gemini Live (modelo=models/gemini-3.1-flash-live-preview)
+2026-08-11 01:20:53,531 [INFO] jarvis.voice.gemini_live (gemini_live.py:53): Conectado a Gemini Live
+2026-08-11 01:20:53,531 [INFO] jarvis.core.conversation (conversation.py:35): Iniciando audio
+2026-08-11 01:20:53,531 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:31): Iniciando PyAudio
+2026-08-11 01:20:53,671 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:42): Dispositivo de entrada: Varios micrÃ³fonos (Realtek Audi (index=1)
+2026-08-11 01:20:54,121 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:63): Streams de audio abiertos (input=16000Hz, output=24000Hz)
+2026-08-11 01:20:54,121 [INFO] jarvis.core.conversation (conversation.py:38): Arrancando loops de conversación (send/receive)
+2026-08-11 01:21:46,373 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:22:10,738 [INFO] jarvis.core.conversation (conversation.py:91): Interrupción detectada (barge-in) — cortando reproducción
+2026-08-11 01:22:19,072 [INFO] jarvis.core.jarvis (jarvis.py:41): Deteniendo JARVIS
+2026-08-11 01:22:19,072 [INFO] jarvis.core.conversation (conversation.py:54): Deteniendo conversación
+2026-08-11 01:22:23,274 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:70): Deteniendo PyAudio
+2026-08-11 01:22:23,340 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:84): PyAudio detenido
+2026-08-11 01:22:23,340 [INFO] jarvis.voice.gemini_live (gemini_live.py:57): Desconectando de Gemini Live
+2026-08-11 01:22:23,487 [INFO] jarvis.core.conversation (conversation.py:70): Conversación detenida
+2026-08-11 01:22:23,488 [INFO] jarvis.main (main.py:21): JARVIS finalizado
+2026-08-11 01:22:23,491 [INFO] jarvis.main (main.py:32): Interrumpido por el usuario (Ctrl+C)
+2026-08-11 01:28:48,385 [INFO] jarvis.main (main.py:17): JARVIS arrancando
+2026-08-11 01:28:48,386 [INFO] jarvis.core.jarvis (jarvis.py:29): Iniciando JARVIS
+2026-08-11 01:28:48,386 [INFO] jarvis.core.conversation (conversation.py:43): Conectando proveedor de voz
+2026-08-11 01:28:48,386 [INFO] jarvis.voice.gemini_live (gemini_live.py:44): Conectando a Gemini Live (modelo=models/gemini-3.1-flash-live-preview)
+2026-08-11 01:28:49,707 [INFO] jarvis.voice.gemini_live (gemini_live.py:53): Conectado a Gemini Live
+2026-08-11 01:28:49,708 [INFO] jarvis.core.conversation (conversation.py:46): Iniciando audio
+2026-08-11 01:28:49,708 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:31): Iniciando PyAudio
+2026-08-11 01:28:50,097 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:42): Dispositivo de entrada: Varios micrÃ³fonos (Realtek Audi (index=1)
+2026-08-11 01:28:50,537 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:63): Streams de audio abiertos (input=16000Hz, output=24000Hz)
+2026-08-11 01:28:50,538 [INFO] jarvis.core.conversation (conversation.py:49): Arrancando loops de conversación (send/receive/playback)
+2026-08-11 01:29:04,085 [INFO] jarvis.core.conversation (conversation.py:109): Interrupción detectada (barge-in) — cortando reproducción y descartando 20 chunk(s) pendiente(s)
+2026-08-11 01:29:06,375 [INFO] jarvis.core.conversation (conversation.py:109): Interrupción detectada (barge-in) — cortando reproducción y descartando 9 chunk(s) pendiente(s)
+2026-08-11 01:29:31,667 [INFO] jarvis.core.conversation (conversation.py:109): Interrupción detectada (barge-in) — cortando reproducción y descartando 32 chunk(s) pendiente(s)
+2026-08-11 01:29:44,626 [INFO] jarvis.core.jarvis (jarvis.py:41): Deteniendo JARVIS
+2026-08-11 01:29:44,626 [INFO] jarvis.core.conversation (conversation.py:68): Deteniendo conversación
+2026-08-11 01:29:50,686 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:70): Deteniendo PyAudio
+2026-08-11 01:29:50,723 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:84): PyAudio detenido
+2026-08-11 01:29:50,724 [INFO] jarvis.voice.gemini_live (gemini_live.py:57): Desconectando de Gemini Live
+2026-08-11 01:29:50,875 [INFO] jarvis.core.conversation (conversation.py:84): Conversación detenida
+2026-08-11 01:29:50,876 [INFO] jarvis.main (main.py:21): JARVIS finalizado
+2026-08-11 01:29:50,881 [INFO] jarvis.main (main.py:32): Interrumpido por el usuario (Ctrl+C)
+2026-08-11 01:31:43,629 [INFO] jarvis.main (main.py:17): JARVIS arrancando
+2026-08-11 01:31:43,630 [INFO] jarvis.core.jarvis (jarvis.py:29): Iniciando JARVIS
+2026-08-11 01:31:43,630 [INFO] jarvis.core.conversation (conversation.py:43): Conectando proveedor de voz
+2026-08-11 01:31:43,630 [INFO] jarvis.voice.gemini_live (gemini_live.py:44): Conectando a Gemini Live (modelo=models/gemini-3.1-flash-live-preview)
+2026-08-11 01:31:44,337 [INFO] jarvis.voice.gemini_live (gemini_live.py:53): Conectado a Gemini Live
+2026-08-11 01:31:44,337 [INFO] jarvis.core.conversation (conversation.py:46): Iniciando audio
+2026-08-11 01:31:44,337 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:31): Iniciando PyAudio
+2026-08-11 01:31:44,699 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:42): Dispositivo de entrada: Varios micrÃ³fonos (Realtek Audi (index=1)
+2026-08-11 01:31:45,130 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:63): Streams de audio abiertos (input=16000Hz, output=24000Hz)
+2026-08-11 01:31:45,130 [INFO] jarvis.core.conversation (conversation.py:49): Arrancando loops de conversación (send/receive/playback)
+2026-08-11 01:35:04,351 [INFO] jarvis.core.jarvis (jarvis.py:41): Deteniendo JARVIS
+2026-08-11 01:35:04,351 [INFO] jarvis.core.conversation (conversation.py:68): Deteniendo conversación
+2026-08-11 01:35:04,351 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:70): Deteniendo PyAudio
+2026-08-11 01:35:04,374 [INFO] jarvis.audio.pyaudio_io (pyaudio_io.py:84): PyAudio detenido
+2026-08-11 01:35:04,374 [INFO] jarvis.voice.gemini_live (gemini_live.py:57): Desconectando de Gemini Live
+2026-08-11 01:35:04,521 [INFO] jarvis.core.conversation (conversation.py:84): Conversación detenida
+2026-08-11 01:35:04,522 [INFO] jarvis.main (main.py:21): JARVIS finalizado

@@ -5,6 +5,7 @@ from jarvis.audio.pyaudio_io import PyAudioIO
 from jarvis.core.jarvis import Jarvis
 from jarvis.logging_config import setup_logging
 from jarvis.voice.gemini_live import GeminiLiveProvider
+from jarvis.voice.openww import OpenWakeWordProvider
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,8 @@ logger = logging.getLogger(__name__)
 async def main() -> None:
     voice = GeminiLiveProvider()
     audio = PyAudioIO()
-    jarvis = Jarvis(voice=voice, audio=audio)
+    wake_word = OpenWakeWordProvider()
+    jarvis = Jarvis(voice=voice, audio=audio, wake_word=wake_word)
 
     logger.info("JARVIS arrancando")
     try:
