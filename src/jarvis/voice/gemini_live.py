@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
@@ -14,6 +15,14 @@ logger = logging.getLogger(__name__)
 
 MODEL = "models/gemini-3.1-flash-live-preview"
 
+SYSTEM_INSTRUCTION_PATH = (
+    Path(__file__).parent.parent / "prompts" / "system_instruction.md"
+)
+
+
+def load_system_instruction() -> str:
+    return SYSTEM_INSTRUCTION_PATH.read_text(encoding="utf-8")
+
 
 class GeminiLiveProvider(VoiceProvider):
     def __init__(self):
@@ -24,6 +33,7 @@ class GeminiLiveProvider(VoiceProvider):
 
         self.config = types.LiveConnectConfig(
             response_modalities=["AUDIO"],
+            system_instruction=load_system_instruction(),
             speech_config=types.SpeechConfig(
                 voice_config=types.VoiceConfig(
                     prebuilt_voice_config=types.PrebuiltVoiceConfig(
@@ -39,6 +49,7 @@ class GeminiLiveProvider(VoiceProvider):
 
         self.session = None
         self._session_cm = None
+        self.system_instruction = load_system_instruction()
 
     async def connect(self) -> None:
         logger.info("Conectando a Gemini Live (modelo=%s)", MODEL)

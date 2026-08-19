@@ -12,7 +12,7 @@ from jarvis.voice.wake_word import WakeWordProvider
 load_dotenv()  # Carga variables de entorno desde .env
 
 WAKE_WORD_MODEL_PATH = os.getenv("WAKE_WORD_MODEL_PATH")
-DETECTION_THRESHOLD = 0.5
+DETECTION_THRESHOLD = 0.6
 
 logger = logging.getLogger(__name__)
 
