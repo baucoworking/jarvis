@@ -26,6 +26,8 @@ def load_system_instruction() -> str:
 
 class GeminiLiveProvider(VoiceProvider):
     def __init__(self):
+        self.system_instruction = load_system_instruction()
+
         self.client = genai.Client(
             http_options={"api_version": "v1beta"},
             api_key=os.environ.get("GEMINI_API_KEY"),
@@ -33,12 +35,23 @@ class GeminiLiveProvider(VoiceProvider):
 
         self.config = types.LiveConnectConfig(
             response_modalities=["AUDIO"],
-            system_instruction=load_system_instruction(),
+            system_instruction=self.system_instruction,
             speech_config=types.SpeechConfig(
                 voice_config=types.VoiceConfig(
                     prebuilt_voice_config=types.PrebuiltVoiceConfig(
                         voice_name="Algenib"
                     )
+                )
+            ),
+            # Sensibilidad del VAD del servidor reducida (LOW en vez del
+            # default HIGH) para que ruidos cortos o de bajo volumen no
+            # disparen una interrupción (barge-in) real. prefix_padding_ms
+            # más alto exige más duración sostenida de habla antes de
+            # considerar que arrancó un turno del usuario.
+            realtime_input_config=types.RealtimeInputConfig(
+                automatic_activity_detection=types.AutomaticActivityDetection(
+                    start_of_speech_sensitivity=types.StartSensitivity.START_SENSITIVITY_LOW,
+                    prefix_padding_ms=100,
                 )
             ),
             context_window_compression=types.ContextWindowCompressionConfig(
@@ -49,7 +62,6 @@ class GeminiLiveProvider(VoiceProvider):
 
         self.session = None
         self._session_cm = None
-        self.system_instruction = load_system_instruction()
 
     async def connect(self) -> None:
         logger.info("Conectando a Gemini Live (modelo=%s)", MODEL)
